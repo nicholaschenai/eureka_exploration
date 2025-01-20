@@ -121,4 +121,11 @@ export AZURE_OPENAI_ENDPOINT="YOUR_AZURE_ENDPOINT"
   - Use `headless=True` for rendering issues especially in the pen spinning demo
   - Adjust `num_eval` (evaluating the final reward fn) based on available VRAM (this is run in parallel, default 5 evals need ~40GB)
   - Avoid `capture_video` flag in WSL is it appears to always result in error? maybe due to the same display error in WSL as above?
-```
+
+## TODO
+- Save plots from tensorboard to show that despite reduced sampling, Eureka generally produces better reward functions over time which beats human designed reward functions
+- Animate policies
+
+## Other resources
+- [Eureka Research Paper](https://arxiv.org/abs/2310.12931)
+- My [summary](https://github.com/nicholaschenai/agi-potential-notes/blob/main/papers/eureka.md) (WIP)
