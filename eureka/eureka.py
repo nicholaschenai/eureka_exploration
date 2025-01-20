@@ -5,6 +5,7 @@ import logging
 import matplotlib.pyplot as plt
 import os
 import openai
+from openai import AzureOpenAI
 import re
 import subprocess
 from pathlib import Path
@@ -25,7 +26,12 @@ def main(cfg):
     logging.info(f"Workspace: {workspace_dir}")
     logging.info(f"Project Root: {EUREKA_ROOT_DIR}")
 
-    openai.api_key = os.getenv("OPENAI_API_KEY")
+    # Initialize Azure OpenAI client
+    client = AzureOpenAI(
+        api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+        api_version="2024-02-01",
+        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+    )
 
     task = cfg.env.task
     task_description = cfg.env.description
@@ -88,12 +94,14 @@ def main(cfg):
                 break
             for attempt in range(1000):
                 try:
-                    response_cur = openai.ChatCompletion.create(
-                        model=model,
+                    azure_response = client.chat.completions.create(
+                        model=model,  # model should be your Azure deployment name
                         messages=messages,
                         temperature=cfg.temperature,
                         n=chunk_size
                     )
+                    # Convert Azure response to dictionary format using model_dump_json
+                    response_cur = json.loads(azure_response.model_dump_json())
                     total_samples += chunk_size
                     break
                 except Exception as e:

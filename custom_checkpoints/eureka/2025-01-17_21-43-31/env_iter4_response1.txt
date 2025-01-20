@@ -1,0 +1,86 @@
+Importing module 'gym_38' (/home/nick_work/isaacgym/python/isaacgym/_bindings/linux-x86_64/gym_38.so)
+Setting GYM_USD_PLUG_INFO_PATH to /home/nick_work/isaacgym/python/isaacgym/_bindings/linux-x86_64/usd/plugInfo.json
+PyTorch version 2.0.0+cu117
+Device count 1
+/home/nick_work/isaacgym/python/isaacgym/_bindings/src/gymtorch
+Using /home/nick_work/.cache/torch_extensions/py38_cu117 as PyTorch extensions root...
+Emitting ninja build file /home/nick_work/.cache/torch_extensions/py38_cu117/gymtorch/build.ninja...
+Building extension module gymtorch...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module gymtorch...
+2025-01-18 01:22:46,727 - INFO - logger - logger initialized
+<unknown>:3: DeprecationWarning: invalid escape sequence \*
+Error: FBX library failed to load - importing FBX data will not succeed. Message: No module named 'fbx'
+FBX tools must be installed from https://help.autodesk.com/view/FBX/2020/ENU/?guid=FBX_Developer_Help_scripting_with_python_fbx_installing_python_fbx_html
+/home/nick_work/Eureka/eureka/../isaacgymenvs/isaacgymenvs/train.py:75: UserWarning: 
+The version_base parameter is not specified.
+Please specify a compatability version level, or None.
+Will assume defaults for version 1.1
+  @hydra.main(config_name="config", config_path="./cfg")
+/home/nick_work/miniconda3/envs/eureka/lib/python3.8/site-packages/hydra/_internal/defaults_list.py:415: UserWarning: In config: Invalid overriding of hydra/job_logging:
+Default list overrides requires 'override' keyword.
+See https://hydra.cc/docs/1.2/upgrades/1.0_to_1.1/defaults_list_override for more information.
+
+  deprecation_warning(msg)
+/home/nick_work/miniconda3/envs/eureka/lib/python3.8/site-packages/hydra/_internal/hydra.py:119: UserWarning: Future Hydra versions will no longer change working directory at job runtime by default.
+See https://hydra.cc/docs/1.2/upgrades/1.1_to_1.2/changes_to_job_working_dir/ for more information.
+  ret = run_job(
+/home/nick_work/miniconda3/envs/eureka/lib/python3.8/site-packages/torch/utils/tensorboard/__init__.py:4: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  if not hasattr(tensorboard, "__version__") or LooseVersion(
+Setting seed: 42
+Network Directory: /home/nick_work/Eureka/eureka/outputs/eureka/2025-01-17_21-43-31/policy-2025-01-18_01-22-48/runs/ShadowHandGPT-2025-01-18_01-22-48/nn
+Tensorboard Directory: /home/nick_work/Eureka/eureka/outputs/eureka/2025-01-17_21-43-31/policy-2025-01-18_01-22-48/runs/ShadowHandGPT-2025-01-18_01-22-48/summaries
+self.seed = 42
+Started to train
+Obs type: full_state
+/home/nick_work/miniconda3/envs/eureka/lib/python3.8/site-packages/gym/spaces/box.py:84: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(f"Box bound precision lowered by casting to {self.dtype}")
+[Warning] [carb.gym.plugin] useGpu is set, forcing single scene (0 subscenes)
+Not connected to PVD
++++ Using GPU PhysX
+Physics Engine: PhysX
+Physics Device: cuda:0
+GPU Pipeline: enabled
+/home/nick_work/Eureka/isaacgymenvs/isaacgymenvs/tasks/shadow_handgpt.py:211: DeprecationWarning: an integer is required (got type isaacgym._bindings.linux-x86_64.gym_38.DofDriveMode).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
+  asset_options.default_dof_drive_mode = gymapi.DOF_MODE_NONE
+JointSpec type free not yet supported!
+JointSpec type free not yet supported!
+JointSpec type free not yet supported!
+[Error] [carb.gym.plugin] *** Could not create contact graph to compute collision filters! Are contacts specified properly?
+
+JointSpec type free not yet supported!
+JointSpec type free not yet supported!
+[Error] [carb.gym.plugin] *** Could not create contact graph to compute collision filters! Are contacts specified properly?
+
+Box(-1.0, 1.0, (20,), float32) Box(-inf, inf, (211,), float32)
+current training device: cuda:0
+build mlp: 211
+RunningMeanStd:  (1,)
+RunningMeanStd:  (211,)
+fps step: 36901 fps step and policy inference: 30374 fps total: 27767 epoch: 1/3000 frames: 0
+Error executing job with overrides: ['task=ShadowHandGPT', 'wandb_activate=False', 'wandb_entity=', 'wandb_project=', 'headless=True', 'capture_video=False', 'force_render=False', 'max_iterations=3000']
+Traceback (most recent call last):
+  File "/home/nick_work/Eureka/eureka/../isaacgymenvs/isaacgymenvs/train.py", line 203, in launch_rlg_hydra
+    statistics = runner.run({
+  File "/home/nick_work/Eureka/rl_games/rl_games/torch_runner.py", line 124, in run
+    self.run_train(args)
+  File "/home/nick_work/Eureka/rl_games/rl_games/torch_runner.py", line 101, in run_train
+    self.agent.train()
+  File "/home/nick_work/Eureka/rl_games/rl_games/common/a2c_common.py", line 1251, in train
+    step_time, play_time, update_time, sum_time, a_losses, c_losses, b_losses, entropies, kls, last_lr, lr_mul = self.train_epoch()
+  File "/home/nick_work/Eureka/rl_games/rl_games/common/a2c_common.py", line 1115, in train_epoch
+    batch_dict = self.play_steps()
+  File "/home/nick_work/Eureka/rl_games/rl_games/common/a2c_common.py", line 676, in play_steps
+    res_dict = self.get_action_values(self.obs)
+  File "/home/nick_work/Eureka/rl_games/rl_games/common/a2c_common.py", line 393, in get_action_values
+    res_dict = self.model(input_dict)
+  File "/home/nick_work/miniconda3/envs/eureka/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/nick_work/Eureka/rl_games/rl_games/algos_torch/models.py", line 278, in forward
+    selected_action = distr.sample()
+  File "/home/nick_work/miniconda3/envs/eureka/lib/python3.8/site-packages/torch/distributions/normal.py", line 70, in sample
+    return torch.normal(self.loc.expand(shape), self.scale.expand(shape))
+RuntimeError: normal expects all elements of std >= 0.0
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
