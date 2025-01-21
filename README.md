@@ -14,7 +14,7 @@ This is a quick exploration of [Eureka](https://github.com/eureka-research/Eurek
 
 ## Installation Instructions for WSL
 
-> ⚠️ Important: Consider using native Linux if possible as WSL installation is complex.
+> ⚠️ Important: Consider using native Linux if possible (and follow the original instructions in the Eureka repo) as WSL installation is complex.
 
 1. Create conda environment:
 ```bash
@@ -73,13 +73,16 @@ pip install -e .
     strings PATH/TO/LIBSTDC | grep GLIBCXX
     ```
 
+  d. (Optional, for visualization) Install Vulkan via mesa:
+  To properly run any visualization, you need to get Vulkan in WSL which is tricky as it is not officially supported. There's a workaround by downloading an experimental version of mesa from ppa:kisak/kisak-mesa
+
+  ```bash
+  sudo add-apt-repository ppa:kisak/kisak-mesa
+  sudo apt update
+  sudo apt upgrade
+  ```
+
 Examples in IsaacGym:
-
-**Error: segmentation fault**
-
->  WSL's graphics support, especially for complex OpenGL applications like IsaacGym, can be unstable. The segmentation fault occurs when both the graphics pipeline and viewer are trying to access the GPU through WSL's graphics translation layer.
-
-main prob is the viewer -- comment out everything to do with it
 
 ```bash
 # Test installation (with modifications):
@@ -87,6 +90,11 @@ cd examples  # Must be in examples directory due to relative imports
 python joint_monkey.py
 ```
 
+If didn't install Vulkan via mesa, the code works fine if you comment out anything viewer related, else you'll get
+
+**Error: segmentation fault**
+
+>  WSL's graphics support, especially for complex OpenGL applications like IsaacGym, can be unstable. The segmentation fault occurs when both the graphics pipeline and viewer are trying to access the GPU through WSL's graphics translation layer.
 
 4. Install Eureka:
 
@@ -114,13 +122,39 @@ export AZURE_OPENAI_API_KEY="YOUR_API_KEY"
 export AZURE_OPENAI_ENDPOINT="YOUR_AZURE_ENDPOINT"
 ```
 
-### Important Notes
-- Eureka params: Note the default settings are in env/config which is different from README!
-  - README is closer to the settings from the research paper
-- When running tasks:
-  - Use `headless=True` for rendering issues especially in the pen spinning demo
-  - Adjust `num_eval` (evaluating the final reward fn) based on available VRAM (this is run in parallel, default 5 evals need ~40GB)
-  - Avoid `capture_video` flag in WSL is it appears to always result in error? maybe due to the same display error in WSL as above?
+### Caveat on Eureka params
+- Note the default settings are in env/config which is different from the original README (latter is the right settings for the research paper)
+- Adjust `num_eval` (evaluating the final reward fn) based on available VRAM (this is run in parallel, default 5 evals need ~40GB)
+
+### Visualization via isaacgymenvs
+- Pen spinning demo: Remove the headless arg (i.e. `headless=True`) if Vulkan via mesa is not installed
+- Somehow for `headless=False`, we need `force_render=True`
+
+### Animation
+First, install ffmpeg:
+```bash
+conda install ffmpeg -c conda-forge
+# if this doesnt work, can use sudo apt-get install ffmpeg but the LD_LIBRARY_PATH messes this up, need to fix
+```
+
+Add this to your environment:
+```bash
+export DISPLAY=:0
+```
+
+Add this to `isaacgymenvs/isaacgymenvs/train.py` to handle virtual display initialization:
+```python
+os.environ['PYVIRTUALDISPLAY_DISPLAYFD'] = '0'
+```
+
+Set the right flags. Using the pen spinning demo as an example:
+```bash
+python train.py test=True headless=False task=ShadowHandSpin checkpoint=checkpoints/EurekaPenSpinning.pth capture_video=True
+```
+- strangely it requires `headless=False` and doesnt show the visualization
+- `capture_video=True`
+- additional settings can be found in the isaacgymenvs README
+- this creates a train output in `isaacgymenvs/isaacgymenvs/outputs/DATETIME` where the video is in the `videos` folder as an mp4 file
 
 ## TODO
 - Save plots from tensorboard to show that despite reduced sampling, Eureka generally produces better reward functions over time which beats human designed reward functions
