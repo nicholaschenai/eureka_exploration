@@ -8,3 +8,6 @@ wandb
 .history/
 .vscode
 .cursorrules
+
+# WSL
+*:Zone.Identifier

@@ -3,18 +3,24 @@
 ## Introduction
 This is a quick exploration of [Eureka](https://github.com/eureka-research/Eureka) with some modifications:
 - Uses Azure OpenAI
-- Added instructions for WSL
+- Added [instructions for WSL](#instructions-for-wsl)
 - Ran 3 examples and saved the outputs including logs and checkpoints in `custom_checkpoints` folder
   - Differences with original: 
     - Model is `gpt-4o-2024-08-06` instead of `gpt-4-0314`
     - `sample=2` instead of 16 due to GPU limitations (16GB VRAM)
     - `num_eval=2` instead of 5 due to GPU limitations (16GB VRAM)
-  - use `eureka/utils/copy_sanitize_checkpoints.py`
+  - use `custom_scripts/copy_sanitize_checkpoints.py` to copy checkpoints to `custom_checkpoints` folder
 
+## Documentation
+- [Animation Guide](docs/animation.md) - Instructions for creating and capturing videos of trained policies
+- [Analysis Guide](docs/analysis.md) - Understanding metrics, directory structure, and how to plot results
+- [Results](results/README.md) - Detailed analysis of training results, performance plots, and videos
 
-## Installation Instructions for WSL
+## Instructions for WSL
 
 > ⚠️ Important: Consider using native Linux if possible (and follow the original instructions in the Eureka repo) as WSL installation is complex.
+
+### Installation
 
 1. Create conda environment:
 ```bash
@@ -116,49 +122,30 @@ pip install -e .
 pip install gpustat
 ```
 
-5. Configure Azure OpenAI API:
+## Getting started
+
+Configure Azure OpenAI API:
 ```bash
 export AZURE_OPENAI_API_KEY="YOUR_API_KEY"
 export AZURE_OPENAI_ENDPOINT="YOUR_AZURE_ENDPOINT"
 ```
 
+Then see the original README for the rest of the instructions
+
 ### Caveat on Eureka params
 - Note the default settings are in env/config which is different from the original README (latter is the right settings for the research paper)
 - Adjust `num_eval` (evaluating the final reward fn) based on available VRAM (this is run in parallel, default 5 evals need ~40GB)
 
-### Visualization via isaacgymenvs
-- Pen spinning demo: Remove the headless arg (i.e. `headless=True`) if Vulkan via mesa is not installed
+## Eureka Pen Spinning Demo in WSL
+
+- Remove the headless arg (i.e. `headless=True`) if Vulkan via mesa is not installed
 - Somehow for `headless=False`, we need `force_render=True`
 
-### Animation
-First, install ffmpeg:
-```bash
-conda install ffmpeg -c conda-forge
-# if this doesnt work, can use sudo apt-get install ffmpeg but the LD_LIBRARY_PATH messes this up, need to fix
-```
-
-Add this to your environment:
-```bash
-export DISPLAY=:0
-```
-
-Add this to `isaacgymenvs/isaacgymenvs/train.py` to handle virtual display initialization:
-```python
-os.environ['PYVIRTUALDISPLAY_DISPLAYFD'] = '0'
-```
-
-Set the right flags. Using the pen spinning demo as an example:
-```bash
-python train.py test=True headless=False task=ShadowHandSpin checkpoint=checkpoints/EurekaPenSpinning.pth capture_video=True
-```
-- strangely it requires `headless=False` and doesnt show the visualization
-- `capture_video=True`
-- additional settings can be found in the isaacgymenvs README
-- this creates a train output in `isaacgymenvs/isaacgymenvs/outputs/DATETIME` where the video is in the `videos` folder as an mp4 file
 
 ## TODO
-- Save plots from tensorboard to show that despite reduced sampling, Eureka generally produces better reward functions over time which beats human designed reward functions
-- Animate policies
+- Run human baseline and compare
+- check if despite reduced sampling, can Eureka reward functions beat human designed reward functions
+- see https://github.com/isaac-sim/IsaacLabEureka for newer implementation but task config doesnt seem done
 
 ## Other resources
 - [Eureka Research Paper](https://arxiv.org/abs/2310.12931)

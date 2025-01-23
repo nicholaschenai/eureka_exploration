@@ -46,6 +46,7 @@ from pathlib import Path
 from isaacgymenvs.utils.reformat import omegaconf_to_dict, print_dict
 from isaacgymenvs.utils.utils import set_np_formatting, set_seed
 
+os.environ['PYVIRTUALDISPLAY_DISPLAYFD'] = '0'
 # ROOT_DIR = os.getcwd()
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 
