@@ -20,35 +20,23 @@ This document presents the results of running Eureka on three different tasks, p
 
 ### Videos
 #### Evaluation Run
-<video width="640" height="480" controls>
-  <source src="videos/AllegroHandGPT_eval.mp4" type="video/mp4">
-</video>
+![Evaluation Run](videos/AllegroHandGPT_eval.mp4)
 
 #### Training Progress
 ##### Iteration 0
-<video width="640" height="480" controls>
-  <source src="videos/AllegroHandGPT_iter0.mp4" type="video/mp4">
-</video>
+![Iteration 0](videos/AllegroHandGPT_iter0.mp4)
 
 ##### Iteration 1
-<video width="640" height="480" controls>
-  <source src="videos/AllegroHandGPT_iter1.mp4" type="video/mp4">
-</video>
+![Iteration 1](videos/AllegroHandGPT_iter1.mp4)
 
 ##### Iteration 2
-<video width="640" height="480" controls>
-  <source src="videos/AllegroHandGPT_iter2.mp4" type="video/mp4">
-</video>
+![Iteration 2](videos/AllegroHandGPT_iter2.mp4)
 
 ##### Iteration 3
-<video width="640" height="480" controls>
-  <source src="videos/AllegroHandGPT_iter3.mp4" type="video/mp4">
-</video>
+![Iteration 3](videos/AllegroHandGPT_iter3.mp4)
 
 ##### Iteration 4
-<video width="640" height="480" controls>
-  <source src="videos/AllegroHandGPT_iter4.mp4" type="video/mp4">
-</video>
+![Iteration 4](videos/AllegroHandGPT_iter4.mp4)
 
 ## Humanoid Task
 
@@ -57,35 +45,23 @@ This document presents the results of running Eureka on three different tasks, p
 
 ### Videos
 #### Evaluation Run
-<video width="640" height="480" controls>
-  <source src="videos/HumanoidGPT_eval.mp4" type="video/mp4">
-</video>
+![Evaluation Run](videos/HumanoidGPT_eval.mp4)
 
 #### Training Progress
 ##### Iteration 0
-<video width="640" height="480" controls>
-  <source src="videos/HumanoidGPT_iter0.mp4" type="video/mp4">
-</video>
+![Iteration 0](videos/HumanoidGPT_iter0.mp4)
 
 ##### Iteration 1
-<video width="640" height="480" controls>
-  <source src="videos/HumanoidGPT_iter1.mp4" type="video/mp4">
-</video>
+![Iteration 1](videos/HumanoidGPT_iter1.mp4)
 
 ##### Iteration 2
-<video width="640" height="480" controls>
-  <source src="videos/HumanoidGPT_iter2.mp4" type="video/mp4">
-</video>
+![Iteration 2](videos/HumanoidGPT_iter2.mp4)
 
 ##### Iteration 3
-<video width="640" height="480" controls>
-  <source src="videos/HumanoidGPT_iter3.mp4" type="video/mp4">
-</video>
+![Iteration 3](videos/HumanoidGPT_iter3.mp4)
 
 ##### Iteration 4
-<video width="640" height="480" controls>
-  <source src="videos/HumanoidGPT_iter4.mp4" type="video/mp4">
-</video>
+![Iteration 4](videos/HumanoidGPT_iter4.mp4)
 
 ## ShadowHand Task
 
@@ -94,34 +70,22 @@ This document presents the results of running Eureka on three different tasks, p
 
 ### Videos
 #### Evaluation Run
-<video width="640" height="480" controls>
-  <source src="videos/ShadowHandGPT_eval.mp4" type="video/mp4">
-</video>
+![Evaluation Run](videos/ShadowHandGPT_eval.mp4)
 
 #### Training Progress
 ##### Iteration 0
-<video width="640" height="480" controls>
-  <source src="videos/ShadowHandGPT_iter0.mp4" type="video/mp4">
-</video>
+![Iteration 0](videos/ShadowHandGPT_iter0.mp4)
 
 ##### Iteration 1
-<video width="640" height="480" controls>
-  <source src="videos/ShadowHandGPT_iter1.mp4" type="video/mp4">
-</video>
+![Iteration 1](videos/ShadowHandGPT_iter1.mp4)
 
 ##### Iteration 3
-<video width="640" height="480" controls>
-  <source src="videos/ShadowHandGPT_iter3.mp4" type="video/mp4">
-</video>
+![Iteration 3](videos/ShadowHandGPT_iter3.mp4)
 
 ##### Iteration 4
-<video width="640" height="480" controls>
-  <source src="videos/ShadowHandGPT_iter4.mp4" type="video/mp4">
-</video>
+![Iteration 4](videos/ShadowHandGPT_iter4.mp4)
 
 ## ShadowHand Pen Spinning Demo
 This is a visualization of the pre-trained pen spinning demo, rather than a result from training.
 
-<video width="640" height="480" controls>
-  <source src="videos/original_demo_ShadowHandSpin.mp4" type="video/mp4">
-</video>
+![Original Demo](videos/original_demo_ShadowHandSpin.mp4)
