@@ -2,13 +2,29 @@ import os
 import yaml
 import glob
 from typing import Dict, List, Tuple, Optional
-
-from eureka.utils.file_utils import load_tensorboard_logs
+from collections import defaultdict
+from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
 
 def get_task_name_from_path(task_folder: str) -> str:
     """Extract a clean task name from the folder path for naming results"""
     return os.path.basename(os.path.normpath(task_folder))
+
+
+def load_tensorboard_logs_with_steps(path):
+    """Load tensorboard logs with both values and step numbers"""
+    data = defaultdict(list)
+    steps = defaultdict(list)
+    event_acc = EventAccumulator(path)
+    event_acc.Reload()  # Load all data written so far
+
+    for tag in event_acc.Tags()["scalars"]:
+        events = event_acc.Scalars(tag)
+        for event in events:
+            data[tag].append(event.value)
+            steps[tag].append(event.step)
+    
+    return data, steps
 
 
 class EurekaTaskProcessor:
@@ -93,13 +109,18 @@ class EurekaTaskProcessor:
                     
                     # Load tensorboard logs
                     try:
-                        logs = load_tensorboard_logs(summary_path)
+                        logs, steps = load_tensorboard_logs_with_steps(summary_path)
                         if "consecutive_successes" not in logs:
                             print(f"Warning: No consecutive_successes found in {summary_path}")
                             continue
                             
                         max_consecutive_successes = max(logs["consecutive_successes"])
-                        iter_policies.append((max_consecutive_successes, policy_folder, logs))
+                        # Include both values and steps in the logs dictionary
+                        combined_logs = {
+                            key: {"values": values, "steps": steps[key]} 
+                            for key, values in logs.items()
+                        }
+                        iter_policies.append((max_consecutive_successes, policy_folder, combined_logs))
                     except Exception as e:
                         print(f"Warning: Error loading tensorboard logs from {summary_path}: {e}")
                         continue

@@ -50,8 +50,10 @@ def generate_plots(task_folder: str):
             _, _, best_eval_logs = max(eval_policies, key=lambda x: x[0])
             
             plt.subplot(1, 2, 2)
-            x = range(len(best_eval_logs['consecutive_successes']))
-            plt.plot(x, best_eval_logs['consecutive_successes'], label='Consecutive Successes')
+            consecutive_successes = best_eval_logs['consecutive_successes']
+            x = consecutive_successes['steps']  # Use actual step numbers
+            y = consecutive_successes['values']  # Use values
+            plt.plot(x, y, label='Consecutive Successes')
             plt.xlabel('Step')
             plt.ylabel('Consecutive Successes')
             plt.title('Best Evaluation Run')
