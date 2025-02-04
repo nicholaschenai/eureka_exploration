@@ -14,11 +14,23 @@ temperature: 1.0
 suffix: GPT  # suffix for generated files (indicates LLM model)
 
 # Eureka parameters
-iteration: 1 # how many iterations of Eureka to run
-sample: 3 # number of Eureka samples to generate per iteration
-max_iterations: 3000 # RL Policy training iterations (decrease this to make the feedback loop faster)
+# iteration: 1 # how many iterations of Eureka to run
+iteration: 5 # change to settings in paper
+# sample: 3 # number of Eureka samples to generate per iteration
+sample: 16 # change to settings in paper
+# max_iterations: 3000 # RL Policy training iterations (decrease this to make the feedback loop faster)
+# from paper appendix G1 scores, appears as if for Issacgym, we use env default instead of fixed 3k max_iterations
+max_iterations: ''
 num_eval: 5 # number of evaluation episodes to run for the final reward
 capture_video: False # whether to capture policy rollout videos
+
+# Environment parameters
+num_envs: '' # if set to positive integer, overrides the default number of environments
+
+## Device config
+# pipeline: 'gpu'
+# sim_device: 'cuda:0'
+min_vram: 8 # checks for this amount of VRAM in GB before spinning new subprocess
 
 # Weights and Biases
 use_wandb: False # whether to use wandb for logging

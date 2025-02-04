@@ -17,6 +17,8 @@ from utils.file_utils import find_files_with_substring, load_tensorboard_logs
 from utils.create_task import create_task
 from utils.extract_task_code import *
 
+from custom_utils import wait_for_free_vram
+
 EUREKA_ROOT_DIR = os.getcwd()
 ISAAC_ROOT_DIR = f"{EUREKA_ROOT_DIR}/../isaacgymenvs/isaacgymenvs"
 
@@ -109,7 +111,7 @@ def main(cfg):
                         chunk_size = max(int(chunk_size / 2), 1)
                         print("Current Chunk Size", chunk_size)
                     logging.info(f"Attempt {attempt+1} failed with error: {e}")
-                    time.sleep(1)
+                time.sleep(1)
             if response_cur is None:
                 logging.info("Code terminated due to too many failed attempts!")
                 exit()
@@ -194,16 +196,23 @@ def main(cfg):
             # Find the freest GPU to run GPU-accelerated RL
             set_freest_gpu()
             
+            wait_for_free_vram(cfg.min_vram)
+
             # Execute the python file with flags
             rl_filepath = f"env_iter{iter}_response{response_id}.txt"
             with open(rl_filepath, 'w') as f:
-                process = subprocess.Popen(['python', '-u', f'{ISAAC_ROOT_DIR}/train.py',  
-                                            'hydra/output=subprocess',
-                                            f'task={task}{suffix}', f'wandb_activate={cfg.use_wandb}',
-                                            f'wandb_entity={cfg.wandb_username}', f'wandb_project={cfg.wandb_project}',
-                                            f'headless={not cfg.capture_video}', f'capture_video={cfg.capture_video}', 'force_render=False',
-                                            f'max_iterations={cfg.max_iterations}'],
-                                            stdout=f, stderr=f)
+                cmd = ['python', '-u', f'{ISAAC_ROOT_DIR}/train.py',  
+                        'hydra/output=subprocess',
+                        f'task={task}{suffix}', f'wandb_activate={cfg.use_wandb}',
+                        f'wandb_entity={cfg.wandb_username}', f'wandb_project={cfg.wandb_project}',
+                        f'headless={not cfg.capture_video}', f'capture_video={cfg.capture_video}', 
+                        'force_render=False', f'max_iterations={cfg.max_iterations}',
+                        # f'pipeline={cfg.pipeline}', f'sim_device={cfg.sim_device}',
+                    ]
+                if cfg.num_envs:  # Only add if not empty string
+                    cmd.append(f'num_envs={cfg.num_envs}')
+                process = subprocess.Popen(cmd, stdout=f, stderr=f)
+            time.sleep(1)
             block_until_training(rl_filepath, log_status=True, iter_num=iter, response_id=response_id)
             rl_runs.append(process)
         
@@ -360,17 +369,23 @@ def main(cfg):
     for i in range(cfg.num_eval):
         set_freest_gpu()
         
+        wait_for_free_vram(cfg.min_vram)
+
         # Execute the python file with flags
         rl_filepath = f"reward_code_eval{i}.txt"
         with open(rl_filepath, 'w') as f:
-            process = subprocess.Popen(['python', '-u', f'{ISAAC_ROOT_DIR}/train.py',  
-                                        'hydra/output=subprocess',
-                                        f'task={task}{suffix}', f'wandb_activate={cfg.use_wandb}',
-                                        f'wandb_entity={cfg.wandb_username}', f'wandb_project={cfg.wandb_project}',
-                                        f'headless={not cfg.capture_video}', f'capture_video={cfg.capture_video}', 'force_render=False', f'seed={i}',
-                                        ],
-                                        stdout=f, stderr=f)
-
+            cmd = ['python', '-u', f'{ISAAC_ROOT_DIR}/train.py',  
+                    'hydra/output=subprocess',
+                    f'task={task}{suffix}', f'wandb_activate={cfg.use_wandb}',
+                    f'wandb_entity={cfg.wandb_username}', f'wandb_project={cfg.wandb_project}',
+                    f'headless={not cfg.capture_video}', f'capture_video={cfg.capture_video}', 
+                    'force_render=False', f'seed={i}', 
+                    # f'pipeline={cfg.pipeline}', f'sim_device={cfg.sim_device}',
+                ]
+            # if cfg.num_envs:  # Only add if not empty string
+            #     cmd.append(f'num_envs={cfg.num_envs}')
+            process = subprocess.Popen(cmd, stdout=f, stderr=f)
+        time.sleep(1)
         block_until_training(rl_filepath)
         eval_runs.append(process)
 
