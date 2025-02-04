@@ -5,7 +5,7 @@ This document explains how to analyze the training outputs after using `custom_s
 ## Directory Structure
 
 ```
-custom_checkpoints/
+eureka_artifacts/
     eureka/
         DATE_TIME_FOLDER/           # Task run folder
             .hydra/                 # Configuration files
