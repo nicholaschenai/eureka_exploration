@@ -30,6 +30,8 @@ def convert_videos_to_gifs():
             # Load video and convert to GIF
             clip = VideoFileClip(str(video_path))
             
+            # TODO: left hand side of video delete first 1/4 spatially
+
             # Optimize for size while maintaining quality:
             # 1. Reduce dimensions (keep aspect ratio)
             width = min(clip.w, 320)  # cap width at 320px

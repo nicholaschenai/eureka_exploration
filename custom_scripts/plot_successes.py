@@ -6,6 +6,7 @@ from eureka_task_processor import EurekaTaskProcessor
 
 # Define results directory structure
 RESULTS_DIR = "results"
+CHECKPOINTS_DIR = "custom_checkpoints"
 PLOTS_DIR = os.path.join(RESULTS_DIR, "plots")
 
 
@@ -75,7 +76,7 @@ def generate_plots(task_folder: str):
 def main():
     # Ensure results directories exist
     ensure_results_dirs()    
-    task_folders = glob.glob("custom_checkpoints/eureka/*/")
+    task_folders = glob.glob(CHECKPOINTS_DIR + "/eureka/*/")
     
     for task_folder in task_folders:
         generate_plots(task_folder)

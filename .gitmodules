@@ -1,0 +1,3 @@
+[submodule "eureka_artifacts"]
+	path = eureka_artifacts
+	url = https://github.com/nicholaschenai/eureka_artifacts.git

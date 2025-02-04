@@ -13,7 +13,8 @@ from pathlib import Path
 
 # Constants
 SOURCE_DIR = Path("eureka/outputs")
-DEST_DIR = Path("custom_checkpoints")
+# DEST_DIR = Path("custom_checkpoints")
+DEST_DIR = Path("eureka_artifacts")
 DESKTOP_PATTERN = r'DESKTOP-[A-Z0-9]{7}'
 SANITIZED_NAME = 'SERVER'
 
@@ -39,6 +40,10 @@ def copy_and_sanitize():
     DEST_DIR.mkdir(exist_ok=True)
     
     for root, _, files in os.walk(SOURCE_DIR):
+        # Skip if the path is SOURCE_DIR/old
+        if Path(root).relative_to(SOURCE_DIR).parts[:1] == ('old',):
+            continue
+            
         rel_path = Path(root).relative_to(SOURCE_DIR)
         dest_root = DEST_DIR / rel_path
         dest_root.mkdir(exist_ok=True)

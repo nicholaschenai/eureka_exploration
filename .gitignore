@@ -11,3 +11,7 @@ wandb
 
 # WSL
 *:Zone.Identifier
+
+.env
+logs/
+__pycache__/
