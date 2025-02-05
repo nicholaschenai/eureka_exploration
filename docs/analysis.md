@@ -1,6 +1,6 @@
 # Analysis
 
-This document explains how to analyze the training outputs after using `custom_scripts/copy_sanitize_checkpoints.py` to copy checkpoints from `eureka/outputs/` to `custom_checkpoints/`.
+This document explains how to analyze the training outputs after using `custom_scripts/copy_sanitize_checkpoints.py` to copy checkpoints from `eureka/outputs/` to `eureka_artifacts/`.
 
 ## Directory Structure
 
@@ -60,5 +60,5 @@ Generates two plots:
 ```bash
 python custom_scripts/animate.py
 ```
-Creates visualizations of trained policies in action.
+Creates visualizations of trained policies in action, along with human baseline.
 
