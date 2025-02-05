@@ -4,17 +4,32 @@
 This is a quick exploration of [Eureka](https://github.com/eureka-research/Eureka) with some modifications:
 - Uses Azure OpenAI
 - Added [instructions for WSL](#instructions-for-wsl)
-- Ran 3 examples and saved the outputs including logs and checkpoints in `custom_checkpoints` folder
-  - Differences with original: 
-    - Model is `gpt-4o-2024-08-06` instead of `gpt-4-0314`
-    - `sample=2` instead of 16 due to GPU limitations (16GB VRAM)
-    - `num_eval=2` instead of 5 due to GPU limitations (16GB VRAM)
-  - use `custom_scripts/copy_sanitize_checkpoints.py` to copy checkpoints to `custom_checkpoints` folder
+- Added human baseline evaluation script `human_baseline.py` in `eureka` folder (modified from `eureka.py` to use the regular env from isaacgymenvs)
+- Ran 3 examples and saved the outputs for reproducibility (see below)
+  - Difference with original model is `gpt-4o-2024-08-06` instead of `gpt-4-0314`
+  - use `custom_scripts/copy_sanitize_checkpoints.py` to copy outputs to the `eureka_artifacts` folder
+- Various human baseline runs in `eureka_artifacts/human_baseline`
+- Added VRAM management: `custom_utils.py` includes a `wait_for_free_vram` utility that blocks process execution until sufficient GPU memory (default 8GB) is available (Original Eureka spawns a lot of processes and requires ~128GB VRAM at a time)
+- Bugfix: rename bidex folder to dexterity as script expects that
+
+The outputs (logs, checkpoints, etc) are saved as a submodule to keep this repo light.
+To only clone this repo, run
+```bash
+git clone https://github.com/nicholaschenai/eureka_exploration.git
+```
+
+To clone and include the submodule, run this instead
+```bash
+git clone --recurse-submodules https://github.com/nicholaschenai/eureka_exploration.git
+```
 
 ## Documentation
 - [Animation Guide](docs/animation.md) - Instructions for creating and capturing videos of trained policies
 - [Analysis Guide](docs/analysis.md) - Understanding metrics, directory structure, and how to plot results
-- [Results](results/README.md) - Detailed analysis of training results, performance plots, and videos
+- [Inferring details guide](docs/infer_details.md) - Attempts at inferring details which are not clear from the paper
+- [Experiment Runs](eureka_artifacts/experiment_runs.md) - Details on the experiments runs
+- [Results](eureka_artifacts/README.md) - Detailed analysis of training results, performance plots, and videos
+
 
 ## Instructions for WSL
 
@@ -132,9 +147,32 @@ export AZURE_OPENAI_ENDPOINT="YOUR_AZURE_ENDPOINT"
 
 Then see the original README for the rest of the instructions
 
-### Caveat on Eureka params
-- Note the default settings are in env/config which is different from the original README (latter is the right settings for the research paper)
-- Adjust `num_eval` (evaluating the final reward fn) based on available VRAM (this is run in parallel, default 5 evals need ~40GB)
+### Caveat on Eureka Parameters
+The default settings in `env/config` differ from those mentioned in the original README (the latter reflects the settings used in the research paper). This repo has adjusted `env/config` to match the paper's settings. Also, see [Inferring details guide](docs/infer_details.md) for more details.
+
+#### Parallel Processing and VRAM Requirements
+Eureka runs multiple processes in parallel during:
+- Training: `sample` (K) parallel environments
+- Evaluation: `num_eval` parallel environments
+
+Each process requires approximately 8GB of VRAM. To manage VRAM usage, you have several options:
+
+1. **VRAM Management (Recommended)**
+   - We've added automatic VRAM management that blocks execution until sufficient memory is available
+   - Default threshold is 8GB per process
+   - Adjust `min_vram` in the config to change the required free VRAM threshold
+
+2. **Environment Count**
+   - You can adjust `num_envs` in the config, which controls the number of environments in isaacgymenvs
+   - Note: Reducing this may impact success rates
+
+3. **Sample Size (Not Recommended)**
+   - While reducing `sample` (K) would decrease VRAM usage, it significantly impacts performance
+   - We notice that the first iteration's reward functions are only executable ~25-50% of the time, so reducing K severely limits the variety of reward functions
+   - Our early experiments with K=2 (reduced from K=16) showed:
+     - Less smooth training curves / higher variance
+     - Sometimes unrecoverable performance issues where success rates remain near zero even after many iterations (e.g. AllegroHand, Humanoid)
+     - Potential negative feedback loop where poor reward functions in the prompt confuse the language model (though it can improve reward functions that are already decent)
 
 ## Eureka Pen Spinning Demo in WSL
 
@@ -143,9 +181,13 @@ Then see the original README for the rest of the instructions
 
 
 ## TODO
-- Run human baseline and compare
-- check if despite reduced sampling, can Eureka reward functions beat human designed reward functions
 - see https://github.com/isaac-sim/IsaacLabEureka for newer implementation but task config doesnt seem done
+- Sparse baseline: note that in normal eureka, 
+  - the env from eureka is used, 
+  - modified to set rewards from the reward fn
+  - then the compute_bonus function adds a bonus to the reward if the goal is reached (which implements the sparse reward), and this env file is output in isaacgymenvs
+  - so can do something to set reward fn to zero so we only get the compute bonus?
+- Observations: since only most successful code is fed back to LM (which by definition is executable), it doesnt correct its mistakes from the runs that failed especially due to the code being non-executable
 
 ## Other resources
 - [Eureka Research Paper](https://arxiv.org/abs/2310.12931)

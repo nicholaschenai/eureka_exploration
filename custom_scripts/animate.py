@@ -1,10 +1,5 @@
 """
-animates the trained policies in custom_checkpoints
-
-
-TODO: copy vid from isaacgymenvs/isaacgymenvs/outputs/DATETIME/videos to the subfolder of custom_checkpoints where it came from. the DATETIME is the datetime of the start of animation,
-which is not the same as the datetime of the parent folder.
-so we need to loop thru the runs, take the most recent video folder and copy it before animating the next policy.
+animates the trained policies in eureka_artifacts for both eureka and human baseline experiments
 """
 
 import os
@@ -17,7 +12,10 @@ from typing import Optional
 from eureka_task_processor import EurekaTaskProcessor
 
 # Define results directory structure
-RESULTS_DIR = "results"
+# RESULTS_DIR = "results"
+# CHECKPOINTS_DIR = "custom_checkpoints"
+CHECKPOINTS_DIR = "eureka_artifacts"
+RESULTS_DIR = CHECKPOINTS_DIR
 VIDEOS_DIR = os.path.join(RESULTS_DIR, "videos")
 
 def ensure_results_dirs():
@@ -88,33 +86,38 @@ def generate_videos(task_folder: str):
     try:
         processor = EurekaTaskProcessor(task_folder)
         print(f"Generating videos for task folder: {task_folder}")
+        # video_prefix = f"{processor.task_name}{processor.suffix}"
         video_prefix = f"{processor.task_name}{processor.suffix}"
-        # Generate videos for training iterations
-        for iter_num in range(processor.iteration):
-            # Check if video already exists
-            video_name = f"{video_prefix}_iter{iter_num}.mp4"
-            video_dest = os.path.join(VIDEOS_DIR, video_name)
-            if os.path.exists(video_dest):
-                print(f"Video for iteration {iter_num} already exists, skipping...")
-                continue
-            
-            iter_policies = processor.get_iteration_policies(iter_num)
-            if not iter_policies:
-                print(f"Warning: Skipping video generation for iteration {iter_num} - no valid policies")
-                continue
+        if processor.suffix:
+            # suffix implies GPT/Eureka, no suffix is human baseline
+            video_prefix += f"_epoch_{processor.max_iterations}"
                 
-            policy_folder, _ = processor.get_best_policy(iter_policies)
-            if not policy_folder:
-                continue
+            # Generate videos for training iterations
+            for iter_num in range(processor.iteration):
+                # Check if video already exists
+                video_name = f"{video_prefix}_iter{iter_num}.mp4"
+                video_dest = os.path.join(VIDEOS_DIR, video_name)
+                if os.path.exists(video_dest):
+                    print(f"Video for iteration {iter_num} already exists, skipping...")
+                    continue
                 
-            checkpoint = processor.get_checkpoint_path(policy_folder)
-            if not checkpoint:
-                continue
-                
-            print(f"Animating iteration {iter_num}")
-            VideoGenerator.animate_policy(processor.task_name, checkpoint)
-            VideoGenerator.save_video(video_prefix, iter_num)
-            time.sleep(1)  # Small delay between animations
+                iter_policies = processor.get_iteration_policies(iter_num)
+                if not iter_policies:
+                    print(f"Warning: Skipping video generation for iteration {iter_num} - no valid policies")
+                    continue
+                    
+                policy_folder, _ = processor.get_best_policy(iter_policies)
+                if not policy_folder:
+                    continue
+                    
+                checkpoint = processor.get_checkpoint_path(policy_folder)
+                if not checkpoint:
+                    continue
+                    
+                print(f"Animating iteration {iter_num}")
+                VideoGenerator.animate_policy(processor.task_name, checkpoint)
+                VideoGenerator.save_video(video_prefix, iter_num)
+                time.sleep(1)  # Small delay between animations
         
         # Generate video for best eval run
         eval_video_name = f"{video_prefix}_eval.mp4"
@@ -141,10 +144,11 @@ def main():
     # Ensure results directories exist
     ensure_results_dirs()
     
-    task_folders = glob.glob("custom_checkpoints/eureka/*/")
-    
-    for task_folder in task_folders:
-        generate_videos(task_folder)
+    # Process both eureka and human baseline folders
+    for exp_type in ['eureka', 'human_baseline']:
+        task_folders = glob.glob(os.path.join(CHECKPOINTS_DIR, exp_type, "*/"))
+        for task_folder in task_folders:
+            generate_videos(task_folder)
 
 if __name__ == "__main__":
     main()

@@ -2,11 +2,12 @@ import os
 from pathlib import Path
 from moviepy.editor import VideoFileClip
 
+# RESULTS_DIR = "results"
+RESULTS_DIR = "eureka_artifacts"
+videos_dir = Path(RESULTS_DIR + "/videos")
+gifs_dir = Path(RESULTS_DIR + "/gifs")
+
 def convert_videos_to_gifs():
-    # Define paths
-    videos_dir = Path("results/videos")
-    gifs_dir = Path("results/gifs")
-    
     # Create gifs directory if it doesn't exist
     gifs_dir.mkdir(exist_ok=True)
     
@@ -30,8 +31,12 @@ def convert_videos_to_gifs():
             # Load video and convert to GIF
             clip = VideoFileClip(str(video_path))
             
-            # TODO: left hand side of video delete first 1/4 spatially
-
+            # Crop out the first 1/4 of the video from the left side
+            # cos its some panel thing
+            w = clip.w
+            crop_x1 = int(w * 0.25)  # Start at 25% from the left
+            clip = clip.crop(x1=crop_x1, y1=0, x2=w, y2=clip.h)
+            
             # Optimize for size while maintaining quality:
             # 1. Reduce dimensions (keep aspect ratio)
             width = min(clip.w, 320)  # cap width at 320px

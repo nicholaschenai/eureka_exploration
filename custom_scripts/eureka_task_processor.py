@@ -36,7 +36,10 @@ class EurekaTaskProcessor:
             self.sample = self.config['sample']
             self.num_eval = self.config['num_eval']
             self.task_name = self.config['env']['task']
+            self.max_iterations = self.config.get('max_iterations', '')
             self.suffix = self.config.get('suffix', '')
+            if 'human_baseline' in task_folder:
+                self.suffix = ''
             self.results_name = get_task_name_from_path(task_folder)
         except FileNotFoundError:
             print(f"Error: Config file not found in {task_folder}")
@@ -61,12 +64,15 @@ class EurekaTaskProcessor:
             iter_num: If provided, get policies for this iteration number.
                      If None, get evaluation policies.
         
-        For example, with 5 iterations, 2 samples, 2 evals:
+        Eureka: For example, with 5 iterations, 2 samples, 2 evals:
         - Iteration 0: folders 0-1
         - Iteration 1: folders 2-3
         ...
         - Iteration 4: folders 8-9
         - Evaluation: folders 10-11
+
+        Human Baseline:
+        - Only evaluation folders exist, ignore iteration parameter
         """
 
         try:
@@ -89,7 +95,9 @@ class EurekaTaskProcessor:
                     print(f"Warning: No policy folders found for iteration {iter_num}")
             else:
                 # Get evaluation folders (after all training folders)
-                relevant_folders = policy_folders[total_training_folders:total_training_folders + self.num_eval]
+                # relevant_folders = policy_folders[total_training_folders:total_training_folders + self.num_eval]
+                # Get last num_eval folders, works for both eureka and human baseline
+                relevant_folders = policy_folders[-self.num_eval:]
                 if not relevant_folders:
                     print("Warning: No evaluation policy folders found")
                 
