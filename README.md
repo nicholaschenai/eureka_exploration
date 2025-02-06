@@ -28,7 +28,7 @@ git clone --recurse-submodules https://github.com/nicholaschenai/eureka_explorat
 - [Analysis Guide](docs/analysis.md) - Understanding metrics, directory structure, and how to plot results
 - [Inferring details guide](docs/infer_details.md) - Attempts at inferring details which are not clear from the paper
 - [Experiment Runs](eureka_artifacts/experiment_runs.md) - Details on the experiments runs
-- [Results](eureka_artifacts/README.md) - Detailed analysis of training results, performance plots, and videos
+- [Results](https://github.com/nicholaschenai/eureka_artifacts) - Detailed analysis of training results, performance plots, and videos
 
 
 ## Instructions for WSL
