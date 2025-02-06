@@ -27,7 +27,7 @@ git clone --recurse-submodules https://github.com/nicholaschenai/eureka_explorat
 - [Animation Guide](docs/animation.md) - Instructions for creating and capturing videos of trained policies
 - [Analysis Guide](docs/analysis.md) - Understanding metrics, directory structure, and how to plot results
 - [Inferring details guide](docs/infer_details.md) - Attempts at inferring details which are not clear from the paper
-- [Experiment Runs](eureka_artifacts/experiment_runs.md) - Details on the experiments runs
+- [Experiment Runs](https://github.com/nicholaschenai/eureka_artifacts/blob/main/experiment_runs.md) - Details on the experiments runs
 - [Results](https://github.com/nicholaschenai/eureka_artifacts) - Detailed analysis of training results, performance plots, and videos
 
 
