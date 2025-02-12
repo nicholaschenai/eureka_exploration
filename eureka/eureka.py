@@ -62,9 +62,15 @@ def main(cfg):
     policy_feedback = file_to_string(f'{prompt_dir}/policy_feedback.txt')
     execution_error_feedback = file_to_string(f'{prompt_dir}/execution_error_feedback.txt')
 
+    system_role_name = "system"
+    if 'o1-mini' in model:
+        system_role_name = "user"
+    elif 'o1' in model or 'o3' in model:
+        system_role_name = "developer"
+
     initial_system = initial_system.format(task_reward_signature_string=reward_signature) + code_output_tip
     initial_user = initial_user.format(task_obs_code_string=task_obs_code_string, task_description=task_description)
-    messages = [{"role": "system", "content": initial_system}, {"role": "user", "content": initial_user}]
+    messages = [{"role": system_role_name, "content": initial_system}, {"role": "user", "content": initial_user}]
 
     task_code_string = task_code_string.replace(task, task+suffix)
     # Create Task YAML files
@@ -87,7 +93,12 @@ def main(cfg):
         total_samples = 0
         total_token = 0
         total_completion_token = 0
-        chunk_size = cfg.sample if "gpt-3.5" in model else 4
+
+        chunk_size = 4
+        if "gpt-3.5" in model:
+            chunk_size = cfg.sample
+        elif "o1-mini" in model:
+            chunk_size = 1
 
         logging.info(f"Iteration {iter}: Generating {cfg.sample} samples with {cfg.model}")
 
