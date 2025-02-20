@@ -10,6 +10,7 @@ import os
 import shutil
 import re
 from pathlib import Path
+import argparse
 
 # Constants
 SOURCE_DIR = Path("eureka/outputs")
@@ -17,6 +18,11 @@ SOURCE_DIR = Path("eureka/outputs")
 DEST_DIR = Path("eureka_artifacts")
 DESKTOP_PATTERN = r'DESKTOP-[A-Z0-9]{7}'
 SANITIZED_NAME = 'SERVER'
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--target_folder", default="", help="Optional: Folder path relative to SOURCE_DIR (e.g., 'eureka/2024-02-13')")
+    return parser.parse_args()
 
 def sanitize_filename(filename: str) -> str:
     """Sanitize tensorboard filename by replacing desktop name."""
@@ -32,14 +38,18 @@ def sanitize_log_content(content: str) -> str:
     content = re.sub(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', '[REDACTED_URL]', content)
     return content
 
-def copy_and_sanitize():
+def copy_and_sanitize(args):
     """Main function to copy and sanitize files."""
-    if not SOURCE_DIR.exists():
-        raise FileNotFoundError(f"Source directory {SOURCE_DIR} not found")
+    # If no target folder specified (empty string), use original behavior
+    root_path = SOURCE_DIR
+    if args.target_folder:
+        root_path = SOURCE_DIR / args.target_folder
+    if not root_path.exists():
+        raise FileNotFoundError(f"Target directory {root_path} not found")
     
     DEST_DIR.mkdir(exist_ok=True)
     
-    for root, _, files in os.walk(SOURCE_DIR):
+    for root, _, files in os.walk(root_path):
         # Skip if the path is SOURCE_DIR/old
         if Path(root).relative_to(SOURCE_DIR).parts[:1] == ('old',):
             continue
@@ -51,7 +61,8 @@ def copy_and_sanitize():
         for file in files:
             source_file = Path(root) / file
             dest_file = dest_root / sanitize_filename(file)
-            
+            print(f"Copying {source_file} to {dest_file}")
+
             if file.endswith('.log'):
                 # Sanitize log files
                 with open(source_file, 'r', encoding='utf-8') as f:
@@ -63,8 +74,9 @@ def copy_and_sanitize():
                 shutil.copy2(source_file, dest_file)
 
 if __name__ == "__main__":
+    args = parse_args()
     try:
-        copy_and_sanitize()
+        copy_and_sanitize(args)
         print("Files copied and sanitized successfully")
     except Exception as e:
         print(f"Error: {e}")

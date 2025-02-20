@@ -2,7 +2,7 @@ import os
 import glob
 import matplotlib.pyplot as plt
 
-from eureka_task_processor import EurekaTaskProcessor
+from .eureka_task_processor import EurekaTaskProcessor
 
 # Define results directory structure
 # CHECKPOINTS_DIR = "custom_checkpoints"
